@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturera - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <h3>Facturera</h3>
+            <nav>
+                <div class="nav-item active" onclick="showSection('invoices')">Facturas</div>
+                <div class="nav-item" onclick="showSection('products')">Productos</div>
+                <div class="nav-item" onclick="showSection('settings')">Configuración</div>
+                <div class="nav-item" onclick="logout()">Cerrar Sesión</div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- Invoices Section -->
+            <section id="invoices-section">
+                <div class="header">
+                    <h1>Facturas</h1>
+                    <button class="btn btn-primary" style="width: auto;" onclick="showNewInvoice()">Nueva
+                        Factura</button>
+                </div>
+
+                <div id="invoice-list" class="table-container">
+                    <!-- Invoice List will be populated here -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Secuencial</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado SRI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoices-table-body">
+                            <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- New Invoice Form (Hidden by default) -->
+                <div id="new-invoice-form" class="invoice-form" style="display: none;">
+                    <h2>Nueva Factura</h2>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>RUC / Cédula</label>
+                            <input type="text" id="inv-ruc" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Razón Social</label>
+                            <input type="text" id="inv-name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="inv-email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" id="inv-address" class="form-control">
+                        </div>
+                    </div>
+
+                    <h3>Detalles</h3>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" style="width: auto;"
+                            onclick="addDetailRow()">Agregar Producto</button>
+                    </div>
+                    <table id="details-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="details-body">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 2rem; text-align: right;">
+                        <h3>Total: $<span id="inv-total">0.00</span></h3>
+                        <button class="btn btn-primary" style="width: 200px; margin-top: 1rem;"
+                            onclick="saveInvoice()">Emitir Factura</button>
+                        <button class="btn" style="width: 100px; background: transparent; border: 1px solid #334155;"
+                            onclick="cancelInvoice()">Cancelar</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products-section" style="display: none;">
+                <div class="header">
+                    <h1>Productos</h1>
+                    <button class="btn btn-primary" style="width: auto;" onclick="showNewProduct()">Nuevo
+                        Producto</button>
+                </div>
+
+                <!-- New Product Form -->
+                <div id="new-product-form" class="invoice-form" style="display: none; margin-bottom: 2rem;">
+                    <h3>Nuevo Producto</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Código</label>
+                            <input type="text" id="prod-code" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="prod-name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Unitario</label>
+                            <input type="number" id="prod-price" class="form-control" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Impuesto (0, 2, etc)</label>
+                            <input type="text" id="prod-tax" class="form-control">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width: auto;" onclick="saveProduct()">Guardar
+                        Producto</button>
+                    <button class="btn" style="width: auto; background: transparent;"
+                        onclick="cancelProduct()">Cancelar</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Impuesto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <!-- Products -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" style="display: none;">
+                <div class="header">
+                    <h1>Configuración</h1>
+                </div>
+                <div class="invoice-form">
+                    <h3>Firma Digital (.p12)</h3>
+                    <div class="form-group">
+                        <label>Archivo .p12</label>
+                        <input type="file" id="signature-file" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña Firma</label>
+                        <input type="password" id="signature-pass" class="form-control">
+                    </div>
+                    <button class="btn btn-primary" style="width: auto;" onclick="saveSignature()">Guardar
+                        Configuración</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
